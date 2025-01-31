@@ -1,0 +1,184 @@
+/* Body Styling */
+
+
+/* General Container Styling */
+.container1 {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5)), url('../../public/banner1.jpg');
+  background-size: cover;  /* Ensures the image covers the entire element */
+  background-position: center;  /* Centers the image */
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.login_banner{
+  line-height: 7vh;
+}
+.login_banner input{
+  font-size: 1rem;
+  line-height: 1.5;   
+   padding: 1%;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  width: 28%;
+  margin-top: 1rem;
+}
+.login_banner button{
+  padding: 14px 22px;
+  font-size: 1rem;
+  line-height: 1.5;
+  /* padding: 1%; */
+  border: none;
+  outline: none;
+  border-radius: 10px;
+ cursor: pointer;
+  margin-top: 1rem;
+  background: red;
+  margin-left: 2rem;
+}
+.login_banner span{
+  font-size: 1rem;
+  font-weight: 400;
+}
+.login_banner h1{
+  font-size: 4rem;
+  font-weight: 700;
+}
+
+.input_section{
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+  justify-content: center;
+  align-items: center;
+}
+/* Form Container */
+.login-container,
+.signup-container,
+.otp-container,
+.forget-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 50px 15px;
+}
+
+/* Form Styling */
+.login-form,
+.signup-form,
+.otp-form,
+.forget-form {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Title */
+.login-form h2,
+.signup-form h2,
+.otp-form h2,
+.forget-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Form Field Styling */
+.form-control,
+.otp-input {
+  margin-bottom: 15px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Focused Input Field */
+.form-control:focus,
+.otp-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Button Styling */
+.btn-custom {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-custom:hover {
+  background-color: #0056b3;
+}
+
+/* Link Styling */
+a {
+  color: white;
+  text-decoration: none;
+}
+
+
+
+/* Alert Styling */
+.alert {
+  display: none;
+  padding: 10px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+/* Input Group for OTP */
+.otp-input-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* OTP Input Styling */
+.otp-input {
+  width: 40px;
+  height: 50px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.otp-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .login-container,
+  .signup-container,
+  .otp-container,
+  .forget-container {
+    padding: 30px 10px;
+  }
+
+  .otp-input-group {
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .otp-input {
+    width: 35px;
+    height: 45px;
+    font-size: 16px;
+  }
+}
