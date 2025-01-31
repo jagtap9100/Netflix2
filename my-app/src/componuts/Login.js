@@ -12,7 +12,7 @@ export default function Login() {
   const rememberRef = useRef(null);
 
   const signinHandle = (e) => {
-    e.preventDefault(); // Prevent form from submitting
+    e.preventDefault();
 
     const email = emailRef.current.value;
     const password = passwordRef.current.value;

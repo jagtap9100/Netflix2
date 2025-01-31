@@ -1,36 +1,40 @@
 import React, { useEffect, useState } from "react";
 import "../style/PlanScreen.css";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { db } from "./auth"; // Ensure 'auth' is exporting the correct Firestore instance
+import { db } from "./auth"; // Ensure this path is correct
 import { selectUser } from "../features/userslice";
 import { useSelector } from "react-redux";
-import { collection, query, where, get, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  doc,
+} from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
 import { loadStripe } from "@stripe/stripe-js";
-import { doc, addDoc, onSnapshot, updateDoc } from "firebase/firestore";
-
+import getStripe from "./stripe";
 export default function PlanScreen() {
   const [products, setProducts] = useState([]);
   const auth = getAuth();
   const user = useSelector(selectUser);
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, allow access to Firestore
         console.log("User signed in:", user.uid);
-        // Proceed with Firestore operations
       } else {
-        // User is not signed in, handle accordingly
         console.log("No user signed in");
       }
     });
+
     const fetchProducts = async () => {
       try {
-        // Query for active products
         const productsQuery = query(
           collection(db, "products"),
           where("active", "==", true)
         );
-
         const productsSnapshot = await getDocs(productsQuery);
         const productsData = {};
 
@@ -39,7 +43,12 @@ export default function PlanScreen() {
           productsData[productId] = productDoc.data();
 
           // Fetch prices for each product
-          const pricesCollection = collection(productDoc.ref, "prices");
+          const pricesCollection = collection(
+            db,
+            "products",
+            productId,
+            "prices"
+          );
           const pricesSnapshot = await getDocs(pricesCollection);
 
           productsData[productId].prices = pricesSnapshot.docs.map(
@@ -52,20 +61,56 @@ export default function PlanScreen() {
 
         setProducts(productsData);
       } catch (error) {
-        console.error("Error fetching products: ", error);
+        console.error("Error fetching products:", error);
       }
     };
+
     fetchProducts();
   }, []);
-  const loadpricing = async (priceId) => {};
+
+  const loadPricing = async (priceId) => {
+    if (!user) {
+      console.error("User not found");
+      return;
+    }
+
+    try {
+      const checkoutSessionRef = await addDoc(
+        collection(db, "customers", user.uid, "checkout_sessions"),
+        {
+          price: priceId,
+          success_url: `${window.location.origin}`,
+          cancel_url: `${window.location.origin}/cancel`,
+        }
+      );
+      onSnapshot(checkoutSessionRef, async (snap) => {
+        if (snap.exists()) {
+          const { sessionId } = snap.data();
+          if (sessionId) {
+            const stripe = await getStripe();
+            stripe.redirectToCheckout({ sessionId });
+          }
+        }
+      });
+      console.log("Checkout session created:", checkoutSessionRef.id);
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    }
+  };
 
   return (
     <div className="points container3">
-      <h3>Billing and Payments</h3>
+      <h3>Subscriptions</h3>
       <p className="first flex flex-col">
-        <a href="#" className="text-red-500 cursor-pointer">
-          Plans (Current Plans: <span className="">Prem</span>)
-        </a>
+        {Object.entries(products).map(([productId, productData]) => (
+          <div key={productId}>
+            <h2 className="text-red-500 cursor-pointer">
+              Plans (Current Plans: <span className="">{productData.name}</span>
+              )
+            </h2>
+          </div>
+        ))}
+
         <span
           style={{
             color: "rgba(0,0,0,0.3)",
@@ -73,34 +118,27 @@ export default function PlanScreen() {
             fontSize: "14px",
           }}
         >
-          Renewal dates: <span>03-01-2023</span>
+          Renewal date: <span>03-01-2023</span>
         </span>
       </p>
 
       <table className="w-full text-start">
-        {Object.entries(products).map((productData, productid) => {
-          console.log("PlanproductData: ", productData);
-          return (
-            <tr key={productid}>
-              <td>
-                <p className="font-semibold text-xl ">{productData[1].name}</p>
-                <span className="text-slate-400">
-                  {productData[1].description}
-                </span>
-              </td>
-              <td>
-                <button
-                  onClick={() =>
-                    loadpricing(productData[1]?.prices[0]?.priceId)
-                  }
-                  className="bg-pink-500 rounded-lg p-3 mb-3 text-yellow-50"
-                >
-                  Subscribe
-                </button>
-              </td>
-            </tr>
-          );
-        })}
+        {Object.entries(products).map(([productId, productData]) => (
+          <tr key={productId}>
+            <td>
+              <p className="font-semibold text-xl">{productData.name}</p>
+              <span className="text-slate-400">{productData.description}</span>
+            </td>
+            <td>
+              <button
+                onClick={() => loadPricing(productData?.prices[0]?.priceId)}
+                className="bg-pink-500 rounded-lg p-3 mb-3 text-yellow-50"
+              >
+                Subscribe
+              </button>
+            </td>
+          </tr>
+        ))}
       </table>
     </div>
   );
