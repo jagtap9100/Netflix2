@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "./Navbar";
 import "../style/Prifile.css";
 import PlanScreen from "./PlanScreen";
-export default function profile() {
+export default function Profile() {
   return (
     <>
       <Navbar />

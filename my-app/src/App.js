@@ -46,6 +46,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Homwscreen />} />
           <Route path="/user" element={<Profile />} />
+          <Route path="/success" element={<Homwscreen />} />
         </Routes>
       )}
     </BrowserRouter>
